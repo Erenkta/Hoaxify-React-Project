@@ -1,20 +1,18 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import './bootstrap-override.scss';
-import App from './App';
-import UserSignupPage from './pages/UserSignupPage';
-import LoginPage from './pages/LoginPage';
 import * as serviceWorker from './serviceWorker';
 import './i18n';
-import LanguageSelector from './components/LanguageSelector';
+import App from './container/App';
 
 
 
 ReactDOM.render(
   <div>
-    <LoginPage />
-    <LanguageSelector />
+    <StrictMode>
+      <App />
+    </StrictMode>
   </div>,
   document.getElementById('root')
 );
@@ -23,3 +21,12 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
+/*
+    <ApiProgress>
+      <LoginPage />   Bunu böyle yapmamızın sebebi Parent-Child ilişkisi kurduk artık Parent->Child'a parametre yollayabiliriz
+    </ApiProgress>
+
+
+    strict mode'u kendi ekletti
+*/

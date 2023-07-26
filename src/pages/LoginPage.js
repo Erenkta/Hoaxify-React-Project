@@ -5,6 +5,7 @@ import { login } from '../api/apiCalls';
 import axios from 'axios';
 import ButtonWithProgress from '../components/ButtonWithProgress';
 import { Button } from 'bootstrap';
+import { withApiProgress } from '../shared/ApiProgress';
 
 
 class LoginPage extends Component {
@@ -12,30 +13,9 @@ class LoginPage extends Component {
     username: null,
     password: null,
     error: null,
-    pendingApiCall: false
-
   };
 
-  componentDidMount() {//Component ekrana ilk koyulduğ an
-    console.log("Login Page added to screen");
-    axios.interceptors.request.use((request) => {
-      this.setState({
-        pendingApiCall: true //request atıldığı zaman bunu true'ya çektik
-      })
-      return request;
-    })
-    axios.interceptors.response.use((response) => {
-      this.setState({
-        pendingApiCall: false //Response döndüğü için bekleyen bir apiCall yok ondan bunu false yap
-      })
-      return response
-    }, (error) => { //Burası da hataya düşen response'lar için
-      this.setState({
-        pendingApiCall: false
-      })
-      throw error; //Eğer hata varsa error'u fırlattık
-    })
-  }
+
 
 
   onChange = event => {
@@ -67,8 +47,8 @@ class LoginPage extends Component {
   };
 
   render() {
-    const { t } = this.props;
-    const { error, username, password, pendingApiCall } = this.state
+    const { t, pendingApiCall } = this.props;
+    const { error, username, password } = this.state
 
 
     const buttonEnabled = username && password;
@@ -92,7 +72,8 @@ class LoginPage extends Component {
   }
 }
 
-export default withTranslation()(LoginPage);
+const LoginPageWithTranslation = withTranslation()(LoginPage)
+export default withApiProgress(LoginPageWithTranslation, "/api/1.0/auth");
 
 
 
