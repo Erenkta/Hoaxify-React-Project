@@ -2,27 +2,21 @@ import React, { Component } from 'react';
 import Input from '../components/Input';
 import { withTranslation } from 'react-i18next';
 import { login } from '../api/apiCalls';
-import axios from 'axios';
 import ButtonWithProgress from '../components/ButtonWithProgress';
-import { Button } from 'bootstrap';
 import { withApiProgress } from '../shared/ApiProgress';
-
 
 class LoginPage extends Component {
   state = {
     username: null,
     password: null,
-    error: null,
+    error: null
   };
-
-
-
 
   onChange = event => {
     const { name, value } = event.target;
     this.setState({
       [name]: value,
-      error: null //bir şeyler yazınca error null olduğu için göstermicek
+      error: null
     });
   };
 
@@ -33,48 +27,48 @@ class LoginPage extends Component {
       username,
       password
     };
-    this.setState({ //Login'e tekrar basınca anlık kaybolsun hep orda durmasın diye
-      error: null
-    })
 
+    const { push } = this.props.history;
+
+    this.setState({
+      error: null
+    });
     try {
-      const response = await login(creds)
-    } catch (exception) {
+      await login(creds);
+      push('/');
+    } catch (apiError) {
       this.setState({
-        error: exception.response.data.message //Axios'un bize gönderdeki Json body içindeki mesaja eriştik
-      })
+        error: apiError.response.data.message
+      });
     }
   };
 
   render() {
     const { t, pendingApiCall } = this.props;
-    const { error, username, password } = this.state
-
+    const { username, password, error } = this.state;
 
     const buttonEnabled = username && password;
+
     return (
       <div className="container">
         <form>
           <h1 className="text-center">{t('Login')}</h1>
           <Input label={t('Username')} name="username" onChange={this.onChange} />
           <Input label={t('Password')} name="password" type="password" onChange={this.onChange} />
-          {error && <div className="alert alert-danger" role='alert' >{error}</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="text-center">
             <ButtonWithProgress
               onClick={this.onClickLogin}
               disabled={!buttonEnabled || pendingApiCall}
-              call={pendingApiCall}
-              text={t('Login')} />
+              pendingApiCall={pendingApiCall}
+              text={t('Login')}
+            />
           </div>
         </form>
       </div>
     );
   }
 }
+const LoginPageWithTranslation = withTranslation()(LoginPage);
 
-const LoginPageWithTranslation = withTranslation()(LoginPage)
-export default withApiProgress(LoginPageWithTranslation, "/api/1.0/auth");
-
-
-
-
+export default withApiProgress(LoginPageWithTranslation, '/api/1.0/auth');
