@@ -45,7 +45,6 @@ class UserSignupPage extends React.Component {
       password
     };
 
-
     try {
       const response = await signup(body);
     } catch (error) {
@@ -53,7 +52,6 @@ class UserSignupPage extends React.Component {
         this.setState({ errors: error.response.data.validationErrors });
       }
     }
-
   };
 
   render() {
@@ -72,16 +70,17 @@ class UserSignupPage extends React.Component {
             <ButtonWithProgress
               onClick={this.onClickSignup}
               disabled={pendingApiCall || passwordRepeat !== undefined}
-              call={pendingApiCall}
-              text={t('Sign Up')} />
+              pendingApiCall={pendingApiCall}
+              text={t('Sign Up')}
+            />
           </div>
         </form>
       </div>
     );
   }
 }
+const UserSignupPageWithApiProgress = withApiProgress(UserSignupPage, '/api/1.0/users');
 
-const UserSignupPageWithTranslation = withTranslation()(UserSignupPage);
-const UserSignupPageWithApiProgress = withApiProgress(UserSignupPageWithTranslation, '/api/1.0/users')
+const UserSignupPageWithTranslation = withTranslation()(UserSignupPageWithApiProgress);
 
-export default UserSignupPageWithApiProgress;
+export default UserSignupPageWithTranslation;

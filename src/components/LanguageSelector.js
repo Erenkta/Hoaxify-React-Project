@@ -12,12 +12,12 @@ const LanguageSelector = props => {
   return (
     <div className="container">
       <img
-        src="https://flagsapi.com/TR/flat/32.png"
+        src="https://www.countryflags.io/tr/flat/24.png"
         alt="Turkish Flag"
         onClick={() => onChangeLanguage('tr')}
         style={{ cursor: 'pointer' }}
       ></img>
-      <img src="https://flagsapi.com/US/flat/32.png" alt="USA Flag" onClick={() => onChangeLanguage('en')} style={{ cursor: 'pointer' }}></img>
+      <img src="https://www.countryflags.io/us/flat/24.png" alt="USA Flag" onClick={() => onChangeLanguage('en')} style={{ cursor: 'pointer' }}></img>
     </div>
   );
 };
