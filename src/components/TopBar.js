@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import logo from '../assets/hoaxify.png';
 import { Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
-
+import { Authentication } from '../shared/AuthenticationContext';
 
 class TopBar extends Component {
+  static contextType = Authentication;
 
   render() {
-    const { t, isLoggedIn, username, onLogoutSuccess } = this.props; //Props'tan aldık state'den almak yerine
-
-    let links = ( //Let değişkene sonradan atama yapabilmemizi sağlıyor. Const ise sabit 
-      <ul className="navbar-nav ms-auto">
+    const { t } = this.props;
+    const { state, onLogoutSuccess } = this.context;
+    const { isLoggedIn, username } = state;
+    let links = (
+      <ul className="navbar-nav ml-auto">
         <li>
           <Link className="nav-link" to="/login">
             {t('Login')}
@@ -22,10 +24,10 @@ class TopBar extends Component {
           </Link>
         </li>
       </ul>
-    )
+    );
     if (isLoggedIn) {
       links = (
-        <ul className="navbar-nav ms-auto">
+        <ul className="navbar-nav ml-auto">
           <li>
             <Link className="nav-link" to={`/user/${username}`}>
               {username}
@@ -35,7 +37,7 @@ class TopBar extends Component {
             {t('Logout')}
           </li>
         </ul>
-      )
+      );
     }
 
     return (
@@ -53,10 +55,3 @@ class TopBar extends Component {
 }
 
 export default withTranslation()(TopBar);
-
-
-/*
-Lifting state up bulunduğunuz componenttaki stateleri yukarıdakilere taşıyın diyor
-Bizim top barımız da login page'imiz de app içinde bulunuyor. App bunlardan hiyerarşik olarak daha üstte
-Bu durumda bizim yapmamız gereken şey State'imizi App'e taşımak bu sayede lifting state up yapabiliriz
-*/
