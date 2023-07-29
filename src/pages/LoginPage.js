@@ -5,6 +5,7 @@ import { login } from '../api/apiCalls';
 import ButtonWithProgress from '../components/ButtonWithProgress';
 import { withApiProgress } from '../shared/ApiProgress';
 
+
 class LoginPage extends Component {
   state = {
     username: null,
@@ -14,6 +15,7 @@ class LoginPage extends Component {
 
   onChange = event => {
     const { name, value } = event.target;
+
     this.setState({
       [name]: value,
       error: null
@@ -23,6 +25,7 @@ class LoginPage extends Component {
   onClickLogin = async event => {
     event.preventDefault();
     const { username, password } = this.state;
+    const { onLoginSuccess } = this.props
     const creds = {
       username,
       password
@@ -35,7 +38,8 @@ class LoginPage extends Component {
     });
     try {
       await login(creds);
-      push('/');
+      push('/'); //Root page'e redirect ediyoruz
+      onLoginSuccess(username) //Bize loginPage
     } catch (apiError) {
       this.setState({
         error: apiError.response.data.message
