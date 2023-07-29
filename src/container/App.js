@@ -36,7 +36,7 @@ class App extends Component {
             <Route exact path="/" component={HomePage} />
             {!isLoggedIn && (< Route path="/login" component={(props) => { return <LoginPage {...props} onLoginSuccess={this.onLoginSuccess} /> }} />)}
             {!isLoggedIn && (<Route path="/signup" component={UserSignupPage} />)}
-            <Route path="/user/:username" component={UserPage} />
+            <Route path="/user/:username" component={(props) => { return <UserPage {...props} username={username} /> }} />
             <Redirect to="/" />
           </Switch>
         </Router>
@@ -60,6 +60,6 @@ export default App;
 
  Sorun şu ki biz giriş yapsak bile hala url kısmına Login yazarak login page'i açabiliyoruz
  bunu düzeltmek için  bir kaç işlem yapıcaz
-          {!isLoggedIn && < Route path="/login" component={(props) => { return <LoginPage {...props} onLoginSuccess={this.onLoginSuccess} /> }} />}
+     {!isLoggedIn && (< Route path="/login" component={(props) => { return <LoginPage {...props} onLoginSuccess={this.onLoginSuccess} /> }} />)}
 Böyle bir conditional belirleyerek yapabiliriz
 */
