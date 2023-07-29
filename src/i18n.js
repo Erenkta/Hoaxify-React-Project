@@ -24,7 +24,7 @@ i18n.use(initReactI18next).init({
         Password: 'Şifre',
         'Password Repeat': 'Şifreyi Tekrarla',
         Login: 'Sisteme Gir',
-        Logout: 'Çıkış Yap'
+        Logout: 'Çık'
       }
     }
   },
