@@ -2,15 +2,22 @@ import React, { Component } from 'react';
 import logo from '../assets/hoaxify.png';
 import { Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
-import { Authentication } from '../shared/AuthenticationContext';
+//import { Authentication } from '../shared/AuthenticationContext';
+import { connect } from 'react-redux'
+import { logoutSuccess } from '../redux/authActions';
 
 class TopBar extends Component {
-  static contextType = Authentication;
+  //static contextType = Authentication;
+
+  /*
+  onClickLogout = () => {
+    this.props.dispatch(logoutSuccess()) //burada action oluşturduk ve dispatch ettik. Bunun state'i etkilemesi için bir reducer'a düşmeli --> action -> reducer -> state
+  }*/
 
   render() {
-    const { t } = this.props;
-    const { state, onLogoutSuccess } = this.context;
-    const { isLoggedIn, username } = state;
+    console.log(this.props)
+    const { t, username, isLoggedIn, onLogoutSuccess } = this.props; //mapStateToProps sayesinde propslara çevrildi
+
     let links = (
       <ul className="navbar-nav ml-auto">
         <li>
@@ -54,4 +61,20 @@ class TopBar extends Component {
   }
 }
 
-export default withTranslation()(TopBar);
+const TopBarWithTranslation = withTranslation()(TopBar)
+const mapStateToProps = (store) => {
+  return {
+    // store diye hepsini alırız ya da ihtiyacımız olan kısımları alırız
+    isLoggedIn: store.isLoggedIn, //ilk kısma istediğimiz ismi verebiliriz (keylere)
+    username: store.username
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLogoutSuccess: () => {
+      return dispatch(logoutSuccess()) // Bu sayede ismi onLogoutSuccess olan ve bir action olan component oluşturduk
+    }
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(TopBarWithTranslation); //Connect methodunun 2.parametresiyle beraber actionları da bir component haline getirebiliiriz
