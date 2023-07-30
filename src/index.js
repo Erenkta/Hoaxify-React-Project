@@ -5,13 +5,21 @@ import './bootstrap-override.scss';
 import * as serviceWorker from './serviceWorker';
 import './i18n';
 import App from './container/App';
-import AuthenticationContext from './shared/AuthenticationContext';
+//import AuthenticationContext from './shared/AuthenticationContext';
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import configureStore from './redux/configureStore';
+
+
+const store = configureStore() //state objesi vermek zorundayız
 
 ReactDOM.render(
-  <AuthenticationContext>
+  //<AuthenticationContext>
+  <Provider store={store}>
     <App />
-  </AuthenticationContext>,
-  document.getElementById('root')
+  </Provider>
+  //</AuthenticationContext>
+  , document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

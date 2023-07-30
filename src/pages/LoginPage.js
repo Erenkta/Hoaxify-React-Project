@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import Input from '../components/Input';
 import { withTranslation } from 'react-i18next';
-import { login } from '../api/apiCalls';
 import ButtonWithProgress from '../components/ButtonWithProgress';
 import { withApiProgress } from '../shared/ApiProgress';
-import { Authentication } from '../shared/AuthenticationContext';
+//import { Authentication } from '../shared/AuthenticationContext';
+import { connect } from 'react-redux'
+import { loginHandler } from '../redux/authActions';
 
 class LoginPage extends Component {
-  static contextType = Authentication;
+  //static contextType = Authentication;
 
   state = {
     username: null,
@@ -26,27 +27,24 @@ class LoginPage extends Component {
   onClickLogin = async event => {
     event.preventDefault();
     const { username, password } = this.state;
-    const { onLoginSuccess } = this.context;
     const creds = {
       username,
       password
     };
 
-    const { push } = this.props.history;
+    const { history, dispatch } = this.props
+    const { push } = history;
+
 
     this.setState({
       error: null
     });
     try {
-      const response = await login(creds);
+
+      //Auth Action içindeki fonksiyonu çağırmak
+      await dispatch(loginHandler(creds))
+
       push('/');
-
-      const authState = {
-        ...response.data,
-        password
-      };
-
-      onLoginSuccess(authState);
     } catch (apiError) {
       this.setState({
         error: apiError.response.data.message
@@ -81,5 +79,38 @@ class LoginPage extends Component {
   }
 }
 const LoginPageWithTranslation = withTranslation()(LoginPage);
+const LoginPageWithApiProgress = withApiProgress(LoginPageWithTranslation, '/api/1.0/auth')
 
-export default withApiProgress(LoginPageWithTranslation, '/api/1.0/auth');
+/*
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLoginSuccess: (authSate) => {
+      return dispatch(loginSuccess(authSate))
+    }
+  }
+}  Burada bunu kaldırdık çünkü login işlemini ve daha sonrasında login'in redux'taki state'i güncelleme işlemini redux içinde yapacağız
+*/
+
+export default connect(/*null, mapDispatchToProps*/)(LoginPageWithApiProgress);
+
+
+
+
+// (1)
+/*
+const response = await login(creds);
+const authState = {
+  ...response.data,
+  password
+};
+dispatch(loginSuccess(authState))
+*/ //Burayı authAction içine yolladık
+
+      //onLoginSuccess(authState);
+/*
+const action = {
+  type: 'login-success',
+  payload: authState
+}
+this.props.dispatch(action),
+*/ // (1)
