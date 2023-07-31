@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { signup } from '../api/apiCalls';
 import Input from '../components/Input';
 import { withTranslation } from 'react-i18next';
@@ -6,40 +6,60 @@ import ButtonWithProgress from '../components/ButtonWithProgress';
 import { withApiProgress } from '../shared/ApiProgress';
 import { connect } from 'react-redux'
 import { signupHandler } from '../redux/authActions';
-class UserSignupPage extends React.Component {
-  state = {
+
+const UserSignupPage = (props) => {
+  const [form, setForm] = useState({
     username: null,
     displayName: null,
     password: null,
     passwordRepeat: null,
-    errors: {}
-  };
+  })
+  const [errors, setErrors] = useState({}) //Başlangıç değeri verdik ve null dedik
 
-  onChange = event => {
-    const { t } = this.props;
+
+  const onChange = event => {
+    const { t } = props;
     const { name, value } = event.target;
-    const errors = { ...this.state.errors };
-    errors[name] = undefined;
-    if (name === 'password' || name === 'passwordRepeat') {
-      if (name === 'password' && value !== this.state.passwordRepeat) {
-        errors.passwordRepeat = t('Password mismatch');
-      } else if (name === 'passwordRepeat' && value !== this.state.password) {
-        errors.passwordRepeat = t('Password mismatch');
-      } else {
-        errors.passwordRepeat = undefined;
+
+    const errorsCopy = { ...errors }; //varolan errors objesini kopyaladık
+
+    //errorsCopy[name] = undefined; //Bunun yerine alttakini de yapabiliriz
+    //setErrors(errorsCopy)
+    setErrors((previousErrors) => {
+      return {
+        ...previousErrors,
+        [name]: undefined
       }
-    }
-    this.setState({
-      [name]: value,
-      errors
-    });
+    })
+
+
+    //İsmini direk errors olarak değil errorsCopy yaptık çünkü redux karşılaştırınca aynı obje sanıp değiştirmiyor
+    // buradaki amaç fieldların değişimini gözlemekti
+    //Form'un kopyasını oluşturduk ve girilen değerleri önce formCopy'e kaydettik. Daha sonrasında bu formCopy'i form state'ine atadık
+
+    /*Alttaki yöntem daha profesyonel ondan bu comment out ama çalışıyor
+    const formCopy = { ...form }
+    formCopy[name] = value
+    setForm(formCopy)*/
+
+    //Burada önceki formu aldık ve ...previousForm ile fieldları otomatik yerleştirdik tek tek username : form.username yapmadan. Daha sonra dedik ki [name] = value yani
+    // name kısmına karşılık gelen değeri o an ki value ile değiştir Daha anlamsız gelebilir ama daha prof.
+    setForm((previousForm) => {
+      return {
+        ...previousForm, //Spread operator
+        [name]: value
+      }
+    })
+
+
+
   };
 
-  onClickSignup = async event => {
+  const onClickSignup = async event => {
     event.preventDefault();
 
-    const { username, displayName, password } = this.state;
-    const { history, dispatch } = this.props
+    const { username, displayName, password } = form;
+    const { history, dispatch } = props
     const { push } = history
 
     const body = {
@@ -53,36 +73,39 @@ class UserSignupPage extends React.Component {
       push('/')
     } catch (error) {
       if (error.response.data.validationErrors) {
-        this.setState({ errors: error.response.data.validationErrors });
+        setErrors(error.response.data.validationErrors)
       }
     }
   };
 
-  render() {
-    const { errors } = this.state;
-    const { username, displayName, password, passwordRepeat } = errors;
-    const { t, pendingApiCall } = this.props;
-    return (
-      <div className="container">
-        <form>
-          <h1 className="text-center">{t('Sign Up')}</h1>
-          <Input name="username" label={t('Username')} error={username} onChange={this.onChange} />
-          <Input name="displayName" label={t('Display Name')} error={displayName} onChange={this.onChange} />
-          <Input name="password" label={t('Password')} error={password} onChange={this.onChange} type="password" />
-          <Input name="passwordRepeat" label={t('Password Repeat')} error={passwordRepeat} onChange={this.onChange} type="password" />
-          <div className="text-center">
-            <ButtonWithProgress
-              onClick={this.onClickSignup}
-              disabled={pendingApiCall || passwordRepeat !== undefined}
-              pendingApiCall={pendingApiCall}
-              text={t('Sign Up')}
-            />
-          </div>
-        </form>
-      </div>
-    );
+  const { username: usernameError, displayName: displayNameError, password: passwordError } = errors; //Dedik ki bunları böyle bir değişkenden alıcaz
+  const { t, pendingApiCall } = props;
+  let passwordRepeatError //Validation işlemini kısalttık
+  if (form.password !== form.passwordRepeat) {
+    passwordRepeatError = t('Password mismatch')
   }
+  return (
+    <div className="container">
+      <form>
+        <h1 className="text-center">{t('Sign Up')}</h1>
+        <Input name="username" label={t('Username')} error={usernameError} onChange={onChange} />
+        <Input name="displayName" label={t('Display Name')} error={displayNameError} onChange={onChange} />
+        <Input name="password" label={t('Password')} error={passwordError} onChange={onChange} type="password" />
+        <Input name="passwordRepeat" label={t('Password Repeat')} error={passwordRepeatError} onChange={onChange} type="password" />
+        <div className="text-center">
+          <ButtonWithProgress
+            onClick={onClickSignup}
+            disabled={pendingApiCall || passwordRepeatError !== undefined}
+            pendingApiCall={pendingApiCall}
+            text={t('Sign Up')}
+          />
+        </div>
+      </form>
+    </div>
+  );
+
 }
+
 const UserSignupPageWithApiProgressForSignupRequest = withApiProgress(UserSignupPage, '/api/1.0/users');
 const UserSignupPageWithApiProgressForAuthRequest = withApiProgress(UserSignupPageWithApiProgressForSignupRequest, '/api/1.0/auth');
 const UserSignupPageWithTranslation = withTranslation()(UserSignupPageWithApiProgressForAuthRequest);
