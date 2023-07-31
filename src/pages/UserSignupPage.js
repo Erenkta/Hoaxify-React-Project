@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { signup } from '../api/apiCalls';
 import Input from '../components/Input';
-import { withTranslation } from 'react-i18next';
 import ButtonWithProgress from '../components/ButtonWithProgress';
 import { withApiProgress } from '../shared/ApiProgress';
-import { connect } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { signupHandler } from '../redux/authActions';
+import { useTranslation } from 'react-i18next';
 
 const UserSignupPage = (props) => {
   const [form, setForm] = useState({
@@ -15,14 +14,15 @@ const UserSignupPage = (props) => {
     passwordRepeat: null,
   })
   const [errors, setErrors] = useState({}) //Başlangıç değeri verdik ve null dedik
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
 
 
   const onChange = event => {
-    const { t } = props;
+
     const { name, value } = event.target;
 
-    const errorsCopy = { ...errors }; //varolan errors objesini kopyaladık
-
+    //const errorsCopy = { ...errors }; //varolan errors objesini kopyaladık
     //errorsCopy[name] = undefined; //Bunun yerine alttakini de yapabiliriz
     //setErrors(errorsCopy)
     setErrors((previousErrors) => {
@@ -59,7 +59,7 @@ const UserSignupPage = (props) => {
     event.preventDefault();
 
     const { username, displayName, password } = form;
-    const { history, dispatch } = props
+    const { history } = props
     const { push } = history
 
     const body = {
@@ -79,7 +79,7 @@ const UserSignupPage = (props) => {
   };
 
   const { username: usernameError, displayName: displayNameError, password: passwordError } = errors; //Dedik ki bunları böyle bir değişkenden alıcaz
-  const { t, pendingApiCall } = props;
+  const { pendingApiCall } = props;
   let passwordRepeatError //Validation işlemini kısalttık
   if (form.password !== form.passwordRepeat) {
     passwordRepeatError = t('Password mismatch')
@@ -108,6 +108,6 @@ const UserSignupPage = (props) => {
 
 const UserSignupPageWithApiProgressForSignupRequest = withApiProgress(UserSignupPage, '/api/1.0/users');
 const UserSignupPageWithApiProgressForAuthRequest = withApiProgress(UserSignupPageWithApiProgressForSignupRequest, '/api/1.0/auth');
-const UserSignupPageWithTranslation = withTranslation()(UserSignupPageWithApiProgressForAuthRequest);
 
-export default connect()(UserSignupPageWithTranslation);
+
+export default UserSignupPageWithApiProgressForAuthRequest;
