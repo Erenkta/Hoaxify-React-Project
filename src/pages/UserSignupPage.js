@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Input from '../components/Input';
 import ButtonWithProgress from '../components/ButtonWithProgress';
-import { withApiProgress } from '../shared/ApiProgress';
+import { useApiProgress } from '../shared/ApiProgress';
 import { useDispatch } from 'react-redux'
 import { signupHandler } from '../redux/authActions';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +79,11 @@ const UserSignupPage = (props) => {
   };
 
   const { username: usernameError, displayName: displayNameError, password: passwordError } = errors; //Dedik ki bunları böyle bir değişkenden alıcaz
-  const { pendingApiCall } = props;
+
+  const pendingApiCallSignUp = useApiProgress('/api/1.0/users')
+  const pendingApiCallLogin = useApiProgress('/api/1.0/auth')
+  const pendingApiCall = pendingApiCallLogin || pendingApiCallSignUp
+
   let passwordRepeatError //Validation işlemini kısalttık
   if (form.password !== form.passwordRepeat) {
     passwordRepeatError = t('Password mismatch')
@@ -106,8 +110,9 @@ const UserSignupPage = (props) => {
 
 }
 
+/* Hooks ile hallettik LN-83'e bak
 const UserSignupPageWithApiProgressForSignupRequest = withApiProgress(UserSignupPage, '/api/1.0/users');
 const UserSignupPageWithApiProgressForAuthRequest = withApiProgress(UserSignupPageWithApiProgressForSignupRequest, '/api/1.0/auth');
+*/
 
-
-export default UserSignupPageWithApiProgressForAuthRequest;
+export default UserSignupPage;

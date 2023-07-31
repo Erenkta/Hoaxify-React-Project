@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Input from '../components/Input';
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import ButtonWithProgress from '../components/ButtonWithProgress';
-import { withApiProgress } from '../shared/ApiProgress';
+import { useApiProgress } from '../shared/ApiProgress';
 
 import { useDispatch } from 'react-redux'
 import { loginHandler } from '../redux/authActions';
@@ -50,7 +50,8 @@ const LoginPage = (props) => {
   };
 
 
-  const {/* t ,*/ pendingApiCall } = props;
+  //const {/* t ,*/ /*pendingApiCall */} = props;
+  const pendingApiCall = useApiProgress('/api/1.0/auth') //Burada custom hook ile aldık hiç high order component ile uğraşmadan
 
 
   const buttonEnabled = username && password;
@@ -76,7 +77,7 @@ const LoginPage = (props) => {
   );
 }
 //const LoginPageWithTranslation = withTranslation()(LoginPage); translation'ı hooks ile yapacağız ondan comment out
-const LoginPageWithApiProgress = withApiProgress(LoginPage/*LoginPageWithTranslation*/, '/api/1.0/auth')
+//const LoginPageWithApiProgress = withApiProgress(LoginPage/*LoginPageWithTranslation*/, '/api/1.0/auth') artık Custom hooks ile yapıcaz
 
 /*
 const mapDispatchToProps = (dispatch) => {
@@ -89,7 +90,7 @@ const mapDispatchToProps = (dispatch) => {
 */
 
 //export default (/*null, mapDispatchToProps*/)(LoginPageWithApiProgress); burda da comment out ettik çünkü dispatch'i useDispatch ile alabiliriz
-export default LoginPageWithApiProgress
+export default LoginPage
 
 
 
