@@ -1,12 +1,19 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import logo from '../assets/hoaxify.png';
 import { Link } from 'react-router-dom';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux'
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux'
 import { logoutSuccess } from '../redux/authActions';
 
 const TopBar = (props) => {
+  const { t } = useTranslation()
 
+  const reduxState /* {isLoggedIn,username} yazarak da olurdu*/ = useSelector((store) => {
+    return {
+      isLoggedIn: store.isLoggedIn,
+      username: store.username
+    }
+  })
 
 
   /*
@@ -17,7 +24,12 @@ const TopBar = (props) => {
   //console.log(this.props)
 
 
-  const { t, username, isLoggedIn, onLogoutSuccess } = props; //mapStateToProps sayesinde propslara çevrildi
+  // const { /*username, isLoggedIn, onLogoutSuccess */} = props; //mapStateToProps sayesinde propslara çevrildi
+  const { username, isLoggedIn } = reduxState
+  const dispatch = useDispatch();
+  const onLogoutSuccess = () => {
+    dispatch(logoutSuccess())
+  }
 
   let links = (
     <ul className="navbar-nav ml-auto">
@@ -63,8 +75,8 @@ const TopBar = (props) => {
 }
 
 
-const TopBarWithTranslation = withTranslation()(TopBar)
 
+/*
 const mapStateToProps = (store) => {
   return {
     // store diye hepsini alırız ya da ihtiyacımız olan kısımları alırız
@@ -79,5 +91,8 @@ const mapDispatchToProps = (dispatch) => {
       return dispatch(logoutSuccess()) // Bu sayede ismi onLogoutSuccess olan ve bir action olan component oluşturduk
     }
   }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(TopBarWithTranslation); //Connect methodunun 2.parametresiyle beraber actionları da bir component haline getirebiliiriz
+}*/
+export default /*connect(mapStateToProps, mapDispatchToProps)*/(TopBar); //Connect methodunun 2.parametresiyle beraber actionları da bir component haline getirebiliiriz
+
+
+//Redux hooks'un bize iki tane sunduğu hook var biri state  (mapStateToProps'ta kullanıcaz) diğeri ise dispatch (mapDispatchToProps'ta kullanıcaz)

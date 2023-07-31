@@ -1,12 +1,21 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 //import { Authentication } from '../shared/AuthenticationContext';
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 const ProfileCard = props => {
-  const pathUsername = props.match.params.username;
+
+  const { username: loggedInUsername } = useSelector((store) => {
+    return {
+      username: store.username
+    }
+  }) //state'i aldık
+
+  const routeParams = useParams(); //route işlemleri
+
+  const pathUsername = routeParams.username; //hooks ile ulaştık
   let message = 'We cannot edit';
-  if (pathUsername === props.loggedInUsername) {
+  if (pathUsername === loggedInUsername) {
     message = 'We can edit';
   }
   return <div>{message}</div>;
@@ -21,10 +30,12 @@ class ProfileCardContextWrapper extends React.Component {
 }
 */
 
-const ProfileCardWithRouter = withRouter(ProfileCard)
+//const ProfileCardWithRouter = withRouter(ProfileCard) useParams kullanacağımız için comment out
+/*
 const mapStateToProps = store => {
   return {
     loggedInUsername: store.username
   }
 }
-export default connect(mapStateToProps)(ProfileCardWithRouter);
+*/
+export default ProfileCard;
