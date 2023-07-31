@@ -1,25 +1,27 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import './bootstrap-override.scss';
 import * as serviceWorker from './serviceWorker';
 import './i18n';
 import App from './container/App';
-//import AuthenticationContext from './shared/AuthenticationContext';
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
 import configureStore from './redux/configureStore';
 
 
+
 const store = configureStore() //state objesi vermek zorundayız
 
 ReactDOM.render(
-  //<AuthenticationContext>
+
   <Provider store={store}>
-    <App />
+    <StrictMode>
+      <App />
+    </StrictMode>
   </Provider>
-  //</AuthenticationContext>
   , document.getElementById('root')
+
 );
 
 // If you want your app to work offline and load faster, you can change

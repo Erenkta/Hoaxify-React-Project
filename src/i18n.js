@@ -23,8 +23,8 @@ i18n.use(initReactI18next).init({
         'Display Name': 'Tercih Edilen İsim',
         Password: 'Şifre',
         'Password Repeat': 'Şifreyi Tekrarla',
-        Login: 'Sisteme Gir',
-        Logout: 'Çık'
+        Login: 'Giriş Yap',
+        Logout: 'Çıkış'
       }
     }
   },
