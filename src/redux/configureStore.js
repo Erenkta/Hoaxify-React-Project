@@ -2,6 +2,7 @@ import { createStore, applyMiddleware, compose } from "redux";
 import authReducer from './authReducer'
 import SecureLS from "secure-ls";
 import thunk from 'redux-thunk'
+import { setAuthorizationHeader } from "../api/apiCalls";
 
 const secureLs = new SecureLS();
 
@@ -41,8 +42,12 @@ const configureStore = () => {
     const store = createStore(authReducer, getStateFromLocalStorage(), composeEnhancers(applyMiddleware(thunk))) //3. parametre middleware için
     //state objesi vermek zorundayız //State'i kaldırdık çünkü dynamic yapacağız //State'i tekrar koyduk ama dinamik oldu eğer storage'da bir nesne tutulmuyorsa ve tutuluyorsa diye farklı seçenekler var
 
+    const initialState = getStateFromLocalStorage()
+    setAuthorizationHeader(initialState)
+
     store.subscribe(() => {
         updateStateInLocalStorage(store.getState())
+        setAuthorizationHeader(store.getState())
     })   //store'umuzun içindeki değişimlerden haberdar olmamızı sağlar
 
     return store
