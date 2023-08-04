@@ -5,6 +5,7 @@ import UserListItem from './UserListItem';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useApiProgress } from '../shared/ApiProgress';
+import Spinner from './Spinner';
 
 const UserList = () => {
     const [page, setPage] = useState({
@@ -55,11 +56,7 @@ const UserList = () => {
 
     if (pendingApiCall) {
         actionDiv = (
-            <div className='d-flex justify-content-center'>
-                <div className='spinner-border'>
-                    <span className='sr-only'>Loading ...</span>
-                </div>
-            </div>
+            <Spinner />
         )
     }
     return (
