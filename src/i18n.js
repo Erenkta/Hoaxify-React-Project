@@ -16,7 +16,8 @@ i18n.use(initReactI18next).init({
         Users: 'Users',
         Next: 'Next >',
         Previous: '< Previous',
-        'Load Failure': 'Load Failure'
+        'Load Failure': 'Load Failure',
+        'User Not Found': 'User Not Found',
       }
     },
     tr: {
@@ -32,7 +33,8 @@ i18n.use(initReactI18next).init({
         Users: 'Kullanıcılar',
         Next: 'Sonraki >',
         Previous: '< Önceki',
-        'Load Failure': 'Yükleme Başarısız'
+        'Load Failure': 'Yükleme Başarısız',
+        'User Not Found': 'Kullanıcı Bulunamadı'
       }
     }
   },

@@ -41,7 +41,7 @@ export const useApiProgress = (apiPath) => {
     return function unmount() { //UnMount olunca burası çağrılacak
       unRegisterInterceptor()
     }
-  })
+  }, [apiPath])
 
   return pendingApiCall
 }

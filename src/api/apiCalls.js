@@ -12,6 +12,14 @@ export const getUsers = (page = 0, size = 3) => {
   return axios.get(`/api/1.0/users?currentPage=${page}&pageSize=${size}`) // bir body belirtmeye gerek yok
 }
 
+export const getUserByUsername = username => {
+  return axios.get(`/api/1.0/users/${username}`)
+}
+
+
+
+
+
 export const changeLanguage = language => {
   axios.defaults.headers['accept-language'] = language;
 };
