@@ -15,7 +15,7 @@ const UserList = () => {
     })
     const [loadFailure, setLoadFailure] = useState(false)
 
-    const pendingApiCall = useApiProgress('/api/1.0/users?currentPage')
+    const pendingApiCall = useApiProgress('get', '/api/1.0/users?currentPage')
     useEffect(() => {
         loadUsers()
     }, []) // Buradaki anlam şu . ComponentDidMount Çağrıldı. Daha sonrasında ise hiçbir şeye göre güncellemedik yani sadece çağpırdık ve bıraktık

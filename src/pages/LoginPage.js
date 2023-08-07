@@ -51,7 +51,7 @@ const LoginPage = (props) => {
 
 
   //const {/* t ,*/ /*pendingApiCall */} = props;
-  const pendingApiCall = useApiProgress('/api/1.0/auth') //Burada custom hook ile aldık hiç high order component ile uğraşmadan
+  const pendingApiCall = useApiProgress('post', '/api/1.0/auth') //Burada custom hook ile aldık hiç high order component ile uğraşmadan
 
 
   const buttonEnabled = username && password;
@@ -70,6 +70,7 @@ const LoginPage = (props) => {
             disabled={!buttonEnabled || pendingApiCall}
             pendingApiCall={pendingApiCall}
             text={t('Login')}
+
           />
         </div>
       </form>
