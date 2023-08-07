@@ -80,8 +80,8 @@ const UserSignupPage = (props) => {
 
   const { username: usernameError, displayName: displayNameError, password: passwordError } = errors; //Dedik ki bunları böyle bir değişkenden alıcaz
 
-  const pendingApiCallSignUp = useApiProgress('/api/1.0/users')
-  const pendingApiCallLogin = useApiProgress('/api/1.0/auth')
+  const pendingApiCallSignUp = useApiProgress('post', '/api/1.0/users')
+  const pendingApiCallLogin = useApiProgress('post', '/api/1.0/auth')
   const pendingApiCall = pendingApiCallLogin || pendingApiCallSignUp
 
   let passwordRepeatError //Validation işlemini kısalttık
