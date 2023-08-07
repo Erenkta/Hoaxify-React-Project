@@ -52,9 +52,14 @@ const ProfileCard = props => {
 
 
   const onClickSave = async () => {
+    let image;
+    if (newImage) { //Eğer image seçmeden save edersek diye
+      image = newImage.split(",")[1]
+    }
+
     const body = {
       displayName: updatedDisplayName,
-      image: newImage
+      image
     };
     try {
       const response = await updateUser(username, body)
@@ -68,6 +73,9 @@ const ProfileCard = props => {
     const fileReader = new FileReader()
     fileReader.onloadend = () => {
       setNewImage(fileReader.result)
+    }
+    if (event.target.files.length < 1) {
+      return;
     }
     fileReader.readAsDataURL(file)
   }
@@ -83,7 +91,7 @@ const ProfileCard = props => {
           width='86'
           height='86'
           alt={`${username} profile`}
-          image={newImage || image} />
+          image={image} tempimage={newImage} />
       </div>
       <div className='card-body'>
         {!inEditMode &&
