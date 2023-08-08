@@ -18,6 +18,15 @@ const authReducer = (state = { ...defaultState }, action) => {
             isLoggedIn: true
         }
     }
+    else if (action.type === ACTIONS.UPDATE_SUCCESS) {
+        return {
+            ...state,
+            /* bunun yerine
+            displayName: action.payload.displayName,
+            image: action.payload.displayName*/
+            ...action.payload //aynısı
+        }
+    }
     return state
 }
 export default authReducer;

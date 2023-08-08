@@ -15,6 +15,21 @@ export const loginSuccess = (authState) => {
     }
 }
 
+export const updateSuccess = ({ displayName, image }) => {
+    return {
+        type: ACTIONS.UPDATE_SUCCESS,
+        payload: {
+            displayName,
+            image
+        }
+    }
+}
+
+
+
+
+
+
 export const loginHandler = (credentials) => { //Login page içinde yaptıklarımızı bir bakıma burada yapıyoruz
     return async (dispatch) => { //Dispatch'i almak için oraya yazdık ve returnden kastı aslında bu fonksiyonun ne yapacağı 
         const response = await login(credentials)
