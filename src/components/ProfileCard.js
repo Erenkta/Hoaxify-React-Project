@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 //import { Authentication } from '../shared/AuthenticationContext';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import ProfileImageWithDefault from './ProfileImageWithDefault';
 import { useTranslation } from 'react-i18next';
 import Input from './Input'
@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { updateUser } from '../api/apiCalls';
 import { useApiProgress } from '../shared/ApiProgress';
 import ButtonWithProgress from './ButtonWithProgress'
+import { updateSuccess } from '../redux/authActions';
 
 const ProfileCard = props => {
 
@@ -27,6 +28,7 @@ const ProfileCard = props => {
   const routeParams = useParams(); //route işlemleri
 
   const pathUsername = routeParams.username
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setEditable(pathUsername === loggedInUsername)
@@ -38,6 +40,7 @@ const ProfileCard = props => {
   //const { user } = props;
   const { username, displayName, image } = user;
   const { t } = useTranslation()
+
 
   /* Benim yaptığım
   useEffect(() => {
@@ -91,6 +94,7 @@ const ProfileCard = props => {
       const response = await updateUser(username, body)
       setInEditMode(false)
       setUser(response.data)
+      dispatch(updateSuccess(response.data))
     } catch (error) {
       setErrors(error.response.data.validationErrors)
     }
