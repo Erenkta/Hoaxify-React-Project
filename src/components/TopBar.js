@@ -4,6 +4,10 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutSuccess } from '../redux/authActions';
+import ProfileImageWithDefault from './ProfileImageWithDefault'
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { useRef } from 'react';
 
 const TopBar = (props) => {
   const { t } = useTranslation()
@@ -11,21 +15,31 @@ const TopBar = (props) => {
   const reduxState /* {isLoggedIn,username} yazarak da olurdu*/ = useSelector((store) => {
     return {
       isLoggedIn: store.isLoggedIn,
-      username: store.username
+      username: store.username,
+      displayName: store.displayName,
+      image: store.image,
     }
   })
+  const { username, isLoggedIn, displayName, image } = reduxState
+  const menuArea = useRef(null);
 
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  /*
-  onClickLogout = () => {
-    this.props.dispatch(logoutSuccess()) //burada action oluşturduk ve dispatch ettik. Bunun state'i etkilemesi için bir reducer'a düşmeli --> action -> reducer -> state
-  }*/
+  useEffect(() => {
+    document.addEventListener('click', menuClickTracker);
+    return () => {
+      document.removeEventListener('click', menuClickTracker);
+    };
+  }, [isLoggedIn]); // her seferinde effect'in çalışmamasını sadece loggedIn durumu değişince değişmesini sağladık
 
-  //console.log(this.props)
-
+  const menuClickTracker = event => {
+    if (menuArea.current === null || !menuArea.current.contains(event.target)) {
+      setMenuVisible(false);
+    }
+  };
 
   // const { /*username, isLoggedIn, onLogoutSuccess */} = props; //mapStateToProps sayesinde propslara çevrildi
-  const { username, isLoggedIn } = reduxState
+
   const dispatch = useDispatch();
   const onLogoutSuccess = () => {
     dispatch(logoutSuccess())
@@ -46,15 +60,31 @@ const TopBar = (props) => {
     </ul>
   );
   if (isLoggedIn) {
+    let dropDownClass = 'dropdown-menu p-0 shadow';
+    if (menuVisible) {
+      dropDownClass += ' show';
+    }
+
+
     links = (
-      <ul className="navbar-nav ml-auto">
-        <li>
-          <Link className="nav-link" to={`/user/${username}`}>
-            {username}
-          </Link>
-        </li>
-        <li className="nav-link" onClick={onLogoutSuccess} style={{ cursor: 'pointer' }}>
-          {t('Logout')}
+      <ul className="navbar-nav ml-auto " ref={menuArea}>{/* Buraya dedik ki menuArea diye tanımadığımız yer buraya işaret etsin*/}
+        <li className='nav-item dropdown' >
+          <div className='d-flex' style={{ cursor: 'pointer' }} onClick={() => { setMenuVisible(true) }}>
+            <ProfileImageWithDefault image={image} width='32' height='32' className='rounded-circle m-auto' />
+            <span className='nav-link dropdown-toggle'>
+              {displayName}
+            </span>
+          </div>
+          <div className={dropDownClass}>
+            <Link className="dropdown-item d-flex p-2" to={`/user/${username}`} onClick={() => { setMenuVisible(false) }}>
+              <i className='material-icons text-info m-2'>person</i>
+              {t('My Profile')}
+            </Link>
+            <span className="dropdown-item d-flex p-2" onClick={onLogoutSuccess} style={{ cursor: 'pointer' }}>
+              <i className='material-icons text-danger m-2'>logout</i>
+              {t('Logout')}
+            </span>
+          </div>
         </li>
       </ul>
     );
