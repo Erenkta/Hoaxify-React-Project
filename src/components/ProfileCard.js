@@ -22,6 +22,7 @@ const ProfileCard = props => {
   const [updatedDisplayName, setUpdatedDisplayName] = useState()
   const [editable, setEditable] = useState(false)
   const [newImage, setNewImage] = useState()
+  const [errors, setErrors] = useState({})
 
   const routeParams = useParams(); //route işlemleri
 
@@ -32,10 +33,35 @@ const ProfileCard = props => {
   }, [pathUsername, loggedInUsername])
 
 
+
   const [user, setUser] = useState({})
   //const { user } = props;
   const { username, displayName, image } = user;
   const { t } = useTranslation()
+
+  /* Benim yaptığım
+  useEffect(() => {
+    errors.displayName = undefined
+  }, [errors, updatedDisplayName])
+*/
+
+  useEffect(() => {
+    setErrors((previousErrors) => { //Bu bir fonksiyon ve bize object'in son halini veriyor biz de o son hali kullanıp sadece istediğimiz parametreleri değiştiriyoruz
+      return {
+        ...previousErrors,
+        displayName: undefined,
+      }
+    })
+  }, [updatedDisplayName])
+
+  useEffect(() => {
+    setErrors((previousError) => {
+      return {
+        ...previousError,
+        image: undefined
+      }
+    })
+  }, [newImage])
 
   useEffect(() => {
     setUser(props.user)
@@ -65,7 +91,9 @@ const ProfileCard = props => {
       const response = await updateUser(username, body)
       setInEditMode(false)
       setUser(response.data)
-    } catch (error) { }
+    } catch (error) {
+      setErrors(error.response.data.validationErrors)
+    }
   };
 
   const onChangeFile = event => {
@@ -82,7 +110,7 @@ const ProfileCard = props => {
 
   const pendingApiCall = useApiProgress('put', '/api/1.0/users/' + username);
 
-
+  const { displayName: displayNameError, image: imageError } = errors
   return (
     <div className='card text-center'>
       <div className='card-header'>
@@ -107,10 +135,15 @@ const ProfileCard = props => {
         }
         {inEditMode && (
           <div>
-            <Input label={t('Change Display Name')} defaultValue={displayName} onChange={(event) => {
-              setUpdatedDisplayName(event.target.value)
-            }} />
-            <input type="file" onChange={onChangeFile} />
+            <Input
+              label={t('Change Display Name')}
+              defaultValue={displayName}
+              onChange={(event) => {
+                setUpdatedDisplayName(event.target.value)
+              }}
+              error={displayNameError}
+            />
+            <Input type="file" onChange={onChangeFile} error={imageError} />
             <div>
               <ButtonWithProgress
                 className='btn btn-primary  d-inline-flex'
