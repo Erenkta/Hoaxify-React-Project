@@ -46,10 +46,10 @@ const UserList = () => {
     let actionDiv = (
         <div>
             {first === false && <button className='btn btn-sm btn-light ' onClick={onClickPrev}>
-                Previous
+                {t('Previous')}
             </button>}
             {last === false && <button className='btn btn-sm btn-light float-right' onClick={onClickNext}>{/* eğer biz sadece !last yazsaydık undefined durumda bile false olucaktı ondan direkt === diye kontrol etmemiz daha iyi olur*/}
-                Next
+                {t('Next')}
             </button>}
         </div>
     )
