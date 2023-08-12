@@ -4,16 +4,18 @@ import { useState } from 'react';
 import { getUserByUsername } from '../api/apiCalls';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom'
 import { useApiProgress } from '../shared/ApiProgress';
 import Spinner from '../components/Spinner';
+import HoaxFeed from '../components/HoaxFeed';
 
 const UserPage = props => {
 
   const [user, setUser] = useState({});
-  const { username } = props.match.params
+  const { username } = useParams()
   const [notFound, setNotFound] = useState(false)
-  const pendingApiCall = useApiProgress('get', '/api/1.0/users/' + username)
-
+  const pendingApiCall = useApiProgress('get', '/api/1.0/users/' + username, true) //tam olaarak bu adrese api isteği yolla herhangi bir ekstra parametre yok işte ne page vaar ne de başka bir ek ondan true dedik
+  //bu sayede users/.../... gibi başka bir yerden atılan api ile çakışmayacak mesela users/user1/hoaxes gibi 
   useEffect(() => {
     setNotFound(false)
   }, [user])
@@ -30,13 +32,6 @@ const UserPage = props => {
   }, [username]);
 
   const { t } = useTranslation()
-
-  if (pendingApiCall) {
-    return (
-      <Spinner />
-    )
-  }
-
   if (notFound) {
     return (
       <div className='container'>
@@ -50,10 +45,24 @@ const UserPage = props => {
     )
   }
 
+  if (pendingApiCall || user.username !== username) {
+    return (
+      <Spinner />
+    )
+  }
+
+
 
   return (
     <div className="container">
-      <ProfileCard user={user} />
+      <div className='row'>
+        <div className='col'>
+          <ProfileCard user={user} />
+        </div>
+        <div className='col'>
+          <HoaxFeed />
+        </div>
+      </div>
     </div>
   );
 
