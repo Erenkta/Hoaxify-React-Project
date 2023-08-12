@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { getHoaxes } from '../api/apiCalls'
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom'
 import HoaxView from './HoaxView';
 import { useApiProgress } from '../shared/ApiProgress'
 import Spinner from './Spinner';
@@ -14,8 +15,11 @@ const HoaxFeed = () => {
         last: true,
         number: 0,
     })
+    const { username } = useParams()
 
-    const pendingApiCall = useApiProgress('get', '/api/1.0/hoaxes')//bunu en üstte olması önemli
+    const path = username ? `/api/1.0/users/${username}/hoaxes/?currentPage=` : `/api/1.0/hoaxes/?currentPage=`
+
+    const pendingApiCall = useApiProgress('get', path)//bunu en üstte olması önemli
 
     useEffect(() => {
         loadHoaxes()
@@ -24,7 +28,7 @@ const HoaxFeed = () => {
 
     const loadHoaxes = async (page) => {
         try {
-            const response = await getHoaxes(page)
+            const response = await getHoaxes(username, page)
             setHoaxPage(previousHoaxes => ({
                 ...response.data,
                 content: [...previousHoaxes.content, ...response.data.content]
@@ -32,12 +36,12 @@ const HoaxFeed = () => {
             })) //response.data bize JSON objesini verir
         } catch (error) { }
     }
-    const scaleDown = async (page) => {
+    /*const scaleDown = async (page) => {
         try {
             const response = await getHoaxes(page)
             setHoaxPage(response.data)
         } catch (error) { }
-    }
+    }*/
 
     const { t } = useTranslation();
     const { content, last, number } = hoaxPage
@@ -56,7 +60,7 @@ const HoaxFeed = () => {
                     onClick={pendingApiCall ? () => { } : () => loadHoaxes(number + 1)}> {/*birden fazla tıklanabilmeyi engellemek*/}
                     {pendingApiCall ? <Spinner /> : t('Load old hoaxes')}
                 </div>)}
-            {last && <div className='alert alert-secondary text-center mt-2' style={{ cursor: 'pointer' }} onClick={() => scaleDown(number - 1)}>{t('Scale Down')}</div>}
+            {/*{last && hoaxPage.length > 1 && <div className='alert alert-secondary text-center mt-2' style={{ cursor: 'pointer' }} onClick={() => scaleDown(number - 1)}>{t('Scale Down')}</div>} */}
         </div >
     );
 };

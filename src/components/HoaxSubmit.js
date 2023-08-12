@@ -62,6 +62,7 @@ const HoaxSubmit = () => {
             <ProfileImageWithDefault image={image} width="32" height="32" className="rounded-circle mr-2" />
             <div className='flex-fill'>
                 <textarea
+                    placeholder='Hoax Here Now!'
                     className={textAreaClass}
                     rows={focused ? "3" : "1"}
                     onFocus={() => { setFocused(true) }}

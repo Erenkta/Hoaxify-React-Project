@@ -6,7 +6,6 @@ import * as serviceWorker from './serviceWorker';
 import './i18n';
 import App from './container/App';
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
 import configureStore from './redux/configureStore';
 
 
