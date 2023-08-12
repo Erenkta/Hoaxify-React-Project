@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { getHoaxes } from '../api/apiCalls'
+import { getHoaxes, getOldHoaxes } from '../api/apiCalls'
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom'
 import HoaxView from './HoaxView';
@@ -17,25 +17,45 @@ const HoaxFeed = () => {
     })
     const { username } = useParams()
 
-    const path = username ? `/api/1.0/users/${username}/hoaxes/?currentPage=` : `/api/1.0/hoaxes/?currentPage=`
+    let lastHoaxId = 0
+    if (hoaxPage.content.length > 0) {
+        const lastHoaxIndex = hoaxPage.content.length - 1;
+        lastHoaxId = hoaxPage.content[lastHoaxIndex].id
+    }
 
-    const pendingApiCall = useApiProgress('get', path)//bunu en üstte olması önemli
+    const path = username ? `/api/1.0/users/${username}/hoaxes/?currentPage=` : `/api/1.0/hoaxes/?currentPage=`
+    const initialHoaxLoadProgress = useApiProgress('get', path)//bunu en üstte olması önemli
+
+    const oldHoaxPath = username ? `/api/1.0/${username}/hoaxes/${lastHoaxId}` : `/api/1.0/hoaxes/${lastHoaxId}`
+    const loadOldHoaxesProgress = useApiProgress('get', oldHoaxPath, true)
 
     useEffect(() => {
+        const loadHoaxes = async (page) => {
+            try {
+                const response = await getHoaxes(username, page)
+                setHoaxPage(previousHoaxes => ({
+                    ...response.data,
+                    content: [...previousHoaxes.content, ...response.data.content]
+
+                })) //response.data bize JSON objesini verir
+            } catch (error) { }
+        }
         loadHoaxes()
-    }, []) //sadece mount anında çalış
+    }, [username]) //sadece mount anında çalış
 
+    const loadOldHoaxes = async () => {
 
-    const loadHoaxes = async (page) => {
-        try {
-            const response = await getHoaxes(username, page)
-            setHoaxPage(previousHoaxes => ({
-                ...response.data,
-                content: [...previousHoaxes.content, ...response.data.content]
+        const response = await getOldHoaxes(lastHoaxId, username)
 
-            })) //response.data bize JSON objesini verir
-        } catch (error) { }
+        setHoaxPage(previousHoaxes => ({
+            ...response.data,
+            content: [...previousHoaxes.content, ...response.data.content]
+
+        })) //response.data bize JSON objesini verir
+
     }
+
+
     /*const scaleDown = async (page) => {
         try {
             const response = await getHoaxes(page)
@@ -44,9 +64,9 @@ const HoaxFeed = () => {
     }*/
 
     const { t } = useTranslation();
-    const { content, last, number } = hoaxPage
+    const { content, last } = hoaxPage
     if (hoaxPage.content.length === 0) {
-        return <div className='alert alert-secondary text-center mt-2'>{pendingApiCall ? <Spinner /> : t('There are no hoaxes')}</div>
+        return <div className='alert alert-secondary text-center mt-2'>{initialHoaxLoadProgress ? <Spinner /> : t('There are no hoaxes')}</div>
     }
 
     return (
@@ -56,9 +76,9 @@ const HoaxFeed = () => {
             })}
             {!last && (
                 <div className='alert alert-secondary text-center mt-2'
-                    style={{ cursor: pendingApiCall ? 'not-allowed' : 'pointer' }}
-                    onClick={pendingApiCall ? () => { } : () => loadHoaxes(number + 1)}> {/*birden fazla tıklanabilmeyi engellemek*/}
-                    {pendingApiCall ? <Spinner /> : t('Load old hoaxes')}
+                    style={{ cursor: loadOldHoaxesProgress ? 'not-allowed' : 'pointer' }}
+                    onClick={loadOldHoaxesProgress ? () => { } : () => loadOldHoaxes()}> {/*birden fazla tıklanabilmeyi engellemek*/}
+                    {loadOldHoaxesProgress ? <Spinner /> : t('Load old hoaxes')}
                 </div>)}
             {/*{last && hoaxPage.length > 1 && <div className='alert alert-secondary text-center mt-2' style={{ cursor: 'pointer' }} onClick={() => scaleDown(number - 1)}>{t('Scale Down')}</div>} */}
         </div >
