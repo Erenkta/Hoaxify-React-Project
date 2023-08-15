@@ -6,7 +6,7 @@ const ProfileImageWithDefault = (props) => {
 
     let imageSource = defaultPicture
     if (image) {
-        imageSource = "/images/" + image //http://localhost:8080/images/profile.png şeklinde request atmamıza yaradı 
+        imageSource = "/images/profile/" + image //http://localhost:8080/images/profile.png şeklinde request atmamıza yaradı 
     } //eğer fotosu varsa onu koy yoksa bunu koy
 
     return (
