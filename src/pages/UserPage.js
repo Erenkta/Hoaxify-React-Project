@@ -1,7 +1,7 @@
 import React from 'react';
 import ProfileCard from '../components/ProfileCard';
 import { useState } from 'react';
-import { getUserByUsername } from '../api/apiCalls';
+import { getUser } from '../api/apiCalls';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom'
@@ -23,7 +23,7 @@ const UserPage = props => {
   useEffect(() => {
     const loadUser = async () => { //Bunu böyle yapınca parametre değişince kendini yenilemesini sağladık
       try {
-        const response = await getUserByUsername(username)
+        const response = await getUser(username)
         setUser(response.data) //JsonBody'i user'a verdik
 
       } catch (error) { setNotFound(true) }
