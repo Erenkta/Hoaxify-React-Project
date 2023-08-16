@@ -83,6 +83,14 @@ const HoaxFeed = () => {
         ))
         setNewHoaxCount(0)
     }
+    const onDeleteHoaxSuccess = id => {
+        setHoaxPage(previousHoaxesPage => ({
+            ...previousHoaxesPage,
+            content: previousHoaxesPage.content.filter((hoax) => {
+                return hoax.id !== id
+            })
+        }))
+    }
 
 
     /*const scaleDown = async (page) => {
@@ -107,7 +115,7 @@ const HoaxFeed = () => {
                     {loadNewHoaxesProgress ? <Spinner /> : t('There are new hoaxes')}
                 </div>)}
             {content.map(hoax => {
-                return <HoaxView key={hoax.id} hoax={hoax} />
+                return <HoaxView key={hoax.id} hoax={hoax} onDeleteHoax={onDeleteHoaxSuccess} />
             })}
             {!last && (
                 <div className='alert alert-secondary text-center mt-2'
