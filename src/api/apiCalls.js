@@ -13,7 +13,7 @@ export const changeLanguage = language => {
 };
 
 export const getUsers = (page = 0, size = 3) => {
-  return axios.get(`/api/1.0/users?page=${page}&size=${size}`);
+  return axios.get(`/api/1.0/users?currentPage=${page}&pageSize=${size}`);
 };
 
 export const setAuthorizationHeader = ({ username, password, isLoggedIn }) => {
@@ -60,3 +60,7 @@ export const getNewHoaxes = (id, username) => {
 export const postHoaxAttachment = attachment => {
   return axios.post('/api/1.0/hoax-attachments', attachment);
 };
+
+export const deleteHoax = id => {
+  return axios.delete(`/api/1.0/hoaxes/${id}`);
+}
