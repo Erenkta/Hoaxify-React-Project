@@ -34,8 +34,9 @@ export const loginHandler = (credentials) => { //Login page içinde yaptıkları
     return async (dispatch) => { //Dispatch'i almak için oraya yazdık ve returnden kastı aslında bu fonksiyonun ne yapacağı 
         const response = await login(credentials)
         const authState = {
-            ...response.data,
-            password: credentials.password
+            ...response.data.user,
+            password: credentials.password,
+            token: response.data.token
         }
         dispatch(loginSuccess(authState))
         return response //Belki response objesini kullanır diye de geri döndük
