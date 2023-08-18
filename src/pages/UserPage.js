@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom'
 import { useApiProgress } from '../shared/ApiProgress';
 import Spinner from '../components/Spinner';
 import HoaxFeed from '../components/HoaxFeed';
+import Modal from '../components/Modal';
 
 const UserPage = props => {
 
@@ -16,6 +17,7 @@ const UserPage = props => {
   const [notFound, setNotFound] = useState(false)
   const pendingApiCall = useApiProgress('get', '/api/1.0/users/' + username, true) //tam olaarak bu adrese api isteği yolla herhangi bir ekstra parametre yok işte ne page vaar ne de başka bir ek ondan true dedik
   //bu sayede users/.../... gibi başka bir yerden atılan api ile çakışmayacak mesela users/user1/hoaxes gibi 
+  const { t } = useTranslation()
   useEffect(() => {
     setNotFound(false)
   }, [user])
@@ -31,7 +33,7 @@ const UserPage = props => {
     loadUser()
   }, [username]);
 
-  const { t } = useTranslation()
+
   if (notFound) {
     return (
       <div className='container'>
@@ -54,16 +56,18 @@ const UserPage = props => {
 
 
   return (
-    <div className="container">
-      <div className='row'>
-        <div className='col'>
-          <ProfileCard user={user} />
-        </div>
-        <div className='col'>
-          <HoaxFeed />
+    <>
+      <div className="container">
+        <div className='row'>
+          <div className='col'>
+            <ProfileCard user={user} />
+          </div>
+          <div className='col'>
+            <HoaxFeed />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 
 };
